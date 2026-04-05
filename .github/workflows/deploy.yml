@@ -17,7 +17,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20 # Updated from 18
+          node-version: 20
 
       - uses: pnpm/action-setup@v2
         name: Install pnpm
@@ -29,7 +29,7 @@ jobs:
         run: pnpm install
 
       - name: Publish
-        uses: cloudflare/wrangler-action@v3 # Updated from @2.0.0
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           secrets: |
