@@ -8,19 +8,20 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Deploy
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: 20
 
       - uses: pnpm/action-setup@v2
         name: Install pnpm
+        id: pnpm-install
         with:
           version: 8
 
@@ -28,14 +29,14 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Publish
-        uses: cloudflare/wrangler-action@v3 # Upgraded to v3
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }} # Moved here from env
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
           secrets: |
             DISCORD_ROLE_MENTION_ID
             DISCORD_WEBHOOK_URL
         env:
-          # These are needed for the Worker to access them at runtime
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           DISCORD_ROLE_MENTION_ID: ${{ secrets.DISCORD_ROLE_MENTION_ID }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
