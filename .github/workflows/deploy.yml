@@ -8,20 +8,19 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Deploy
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - uses: pnpm/action-setup@v2
         name: Install pnpm
-        id: pnpm-install
         with:
           version: 8
 
@@ -29,13 +28,14 @@ jobs:
         run: pnpm install
 
       - name: Publish
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v3 # Upgraded to v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }} # Moved here from env
           secrets: |
             DISCORD_ROLE_MENTION_ID
             DISCORD_WEBHOOK_URL
         env:
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          # These are needed for the Worker to access them at runtime
           DISCORD_ROLE_MENTION_ID: ${{ secrets.DISCORD_ROLE_MENTION_ID }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
