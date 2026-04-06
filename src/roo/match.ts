@@ -1,4 +1,4 @@
-import { intervalToDuration, isBefore, set } from 'date-fns';
+import { differenceInMinutes, set, startOfMinute } from 'date-fns';
 
 import { ScheduleTime } from './schedule';
 
@@ -12,16 +12,18 @@ export const matchSchedule = (
 	date: Date,
 ): { kind: MatchKind; time: ScheduleTime } | undefined => {
 	const times = Array.isArray(time) ? time : [time];
-	for (const time_ of times) {
-		const scheduleDate = set(date, time_);
-		const { hours = 0, minutes = 0 } = intervalToDuration({ start: scheduleDate, end: date });
+	
+	// OPTIMIZATION: Strip seconds to prevent missed matches if Cron fires late
+	const currentMinute = startOfMinute(date);
 
-		if (hours === 0) {
-			if (minutes === 0) {
-				return { kind: MatchKind.StartsNow, time: time_ };
-			} else if (minutes === 10 && isBefore(date, scheduleDate)) {
-				return { kind: MatchKind.StartsIn10Minutes, time: time_ };
-			}
+	for (const time_ of times) {
+		const scheduleDate = set(currentMinute, time_);
+		const diff = differenceInMinutes(scheduleDate, currentMinute);
+
+		if (diff === 0) {
+			return { kind: MatchKind.StartsNow, time: time_ };
+		} else if (diff === 10) {
+			return { kind: MatchKind.StartsIn10Minutes, time: time_ };
 		}
 	}
 };
