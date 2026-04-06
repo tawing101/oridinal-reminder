@@ -35,8 +35,6 @@ const scheduled = ((_controller, env, ctx) => {
 	}
 
 	if (embeds.length > 0) {
-		// <@&{ID}> is role mention
-		// ref:  https://discord.com/developers/docs/reference#message-formatting-formats
 		const mention = `<@&${env.DISCORD_ROLE_MENTION_ID}>`;
 		const kinds = [...new Set(embeds.map(({ kind: key }) => ScheduleKind[key]))]
 			.sort((a, b) => a.localeCompare(b))
@@ -52,8 +50,21 @@ const scheduled = ((_controller, env, ctx) => {
 				body: JSON.stringify(payload),
 				headers: { 'Content-Type': 'application/json' },
 				method: 'POST',
-			}),
+			})
+			.then(async (res) => {
+				if (!res.ok) {
+					const errorText = await res.text();
+					console.error(`Discord API Error (${res.status}): ${errorText}`);
+				} else {
+					console.log(`Successfully sent ${embeds.length} embeds to Discord.`);
+				}
+			})
+			.catch((err) => {
+				console.error('Fetch error when contacting Discord:', err);
+			})
 		);
+	} else {
+		console.log('No events matched the current time. Nothing sent to Discord.');
 	}
 }) satisfies ExportedHandlerScheduledHandler<Env>;
 
