@@ -1,7 +1,7 @@
 import { utcToZonedTime } from 'date-fns-tz';
 
 import { generateEmbed } from './roo/embed';
-import { matchSchedule } from './roo/match';
+import { MatchKind, matchSchedule } from './roo/match';
 
 import { ROO_TIME_ZONE, Schedule, ScheduleKind, getScheduleDuration, getScheduleTime } from './roo/schedule';
 import { getDailies } from './roo/schedule/daily';
@@ -24,10 +24,16 @@ const scheduled = ((_controller, env, ctx) => {
 	] satisfies Schedule[];
 
 	const embeds = [] as KindValue<ScheduleKind, DiscordWebhookEmbed>[];
+	let hasStartingNow = false;
+
 	for (const schedule of schedules) {
 		const time = getScheduleTime(schedule);
 		const match = matchSchedule(time, date);
+		
 		if (match !== undefined) {
+			if (match.kind === MatchKind.StartsNow) {
+				hasStartingNow = true;
+			}
 			const duration = getScheduleDuration(schedule);
 			const embed = generateEmbed(schedule, match.kind, date, match.time, duration);
 			embeds.push({ kind: schedule.kind, value: embed });
@@ -36,12 +42,14 @@ const scheduled = ((_controller, env, ctx) => {
 
 	if (embeds.length > 0) {
 		const mention = `<@&${env.DISCORD_ROLE_MENTION_ID}>`;
-		const kinds = [...new Set(embeds.map(({ kind: key }) => ScheduleKind[key]))]
-			.sort((a, b) => a.localeCompare(b))
-			.join(' & ');
+		
+		// Friendly, welcoming greeting
+		const greeting = hasStartingNow 
+			? "It's time to play! 🎉" 
+			: "Get ready, everyone! 🌟";
 
 		const payload = {
-			content: `${mention} ${kinds}`,
+			content: `Hey ${mention}! ${greeting}`,
 			embeds: embeds.map(({ value }) => value),
 		} satisfies DiscordWebhookPayload;
 
