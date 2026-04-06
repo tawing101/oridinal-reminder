@@ -1,7 +1,7 @@
 import { utcToZonedTime } from 'date-fns-tz';
 
 import { generateEmbed } from './roo/embed';
-import { MatchKind, matchSchedule } from './roo/match';
+import { matchSchedule } from './roo/match';
 
 import { ROO_TIME_ZONE, Schedule, ScheduleKind, getScheduleDuration, getScheduleTime } from './roo/schedule';
 import { getDailies } from './roo/schedule/daily';
@@ -31,7 +31,7 @@ const scheduled = ((_controller, env, ctx) => {
 		const match = matchSchedule(time, date);
 		
 		if (match !== undefined) {
-			if (match.kind === MatchKind.StartsNow) {
+			if (match.kind === 1) { // 1 corresponds to MatchKind.StartsNow
 				hasStartingNow = true;
 			}
 			const duration = getScheduleDuration(schedule);
@@ -43,7 +43,6 @@ const scheduled = ((_controller, env, ctx) => {
 	if (embeds.length > 0) {
 		const mention = `<@&${env.DISCORD_ROLE_MENTION_ID}>`;
 		
-		// Friendly, welcoming greeting
 		const greeting = hasStartingNow 
 			? "It's time to play! 🎉" 
 			: "Get ready, everyone! 🌟";
