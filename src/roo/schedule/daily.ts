@@ -4,7 +4,6 @@ export enum Daily {
 	Arena,
 	ExtremeChallenge,
 	GuildExpedition,
-	GuildFeast,
 	TheGuildLeague,
 	ThemedParty,
 	TimeSpaceAbnormality,
@@ -22,23 +21,23 @@ export const getDailies = (date: Date): Daily[] => {
 
 		case 1:
 			// monday
-			return [Daily.ExtremeChallenge, Daily.GuildFeast];
+			return [Daily.ExtremeChallenge];
 
 		case 2:
 			// tuesday
-			return [Daily.GuildFeast, Daily.TimeSpaceAbnormality, Daily.TheGuildLeague];
+			return [Daily.TimeSpaceAbnormality, Daily.TheGuildLeague];
 
 		case 3:
 			// wednesday
-			return [Daily.GuildFeast, Daily.Arena];
+			return [Daily.Arena];
 
 		case 4:
 			// thursday
-			return [Daily.GuildFeast, Daily.GuildExpedition, Daily.TheGuildLeague];
+			return [Daily.GuildExpedition, Daily.TheGuildLeague];
 
 		case 5:
 			// friday
-			return [Daily.GuildFeast];
+			return [];
 
 		case 6:
 			// saturday
@@ -52,7 +51,6 @@ export const getDailyDuration = (value: Daily): Duration => {
 			return { minutes: 35 };
 
 		case Daily.GuildExpedition:
-		case Daily.GuildFeast:
 		case Daily.WeekendBanquet:
 			return { minutes: 20 };
 
@@ -78,7 +76,6 @@ export const getDailyTime = (value: Daily): ScheduleTime => {
 		case Daily.ExtremeChallenge:
 			return { hours: 5, minutes: 0 };
 
-		case Daily.GuildFeast:
 		case Daily.ThemedParty:
 		case Daily.WeekendBanquet:
 			return { hours: 20, minutes: 0 };
