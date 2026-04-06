@@ -5,15 +5,27 @@ import { MatchKind } from './match';
 import { ROO_TIME_ZONE, Schedule, ScheduleKind, ScheduleTime, getScheduleValue } from './schedule';
 
 import { toSpaceSeparatedPascalCase } from '../utilities';
+import { Daily } from './schedule/daily';
 
 const colors = {
-	[MatchKind.StartsIn10Minutes]: 0xffd166, // warm yellow for "get ready"
+	[MatchKind.StartsIn5Minutes]: 0xffd166, // warm yellow for "get ready"
 	[MatchKind.StartsNow]: 0x06d6a0, // mint green for "starting now"
 } satisfies Record<MatchKind, number>;
 
-const getEmoji = (kind: ScheduleKind) => {
+const getEmoji = (kind: ScheduleKind, value?: any) => {
+	if (kind === ScheduleKind.Daily) {
+		switch (value) {
+			case Daily.Arena: return '⚔️';
+			case Daily.ExtremeChallenge: return '🔥';
+			case Daily.GuildExpedition: return '🗺️';
+			case Daily.TheGuildLeague: return '🛡️';
+			case Daily.ThemedParty: return '💃';
+			case Daily.TimeSpaceAbnormality: return '🌌';
+			case Daily.WarOfEmperium: return '🏰';
+			case Daily.WeekendBanquet: return '🥂';
+		}
+	}
 	switch (kind) {
-		case ScheduleKind.Daily: return '⚔️';
 		case ScheduleKind.Event: return '✨';
 		case ScheduleKind.Reset: return '🌅';
 		case ScheduleKind.Trade: return '⚖️';
@@ -30,12 +42,12 @@ export const generateEmbed = (
 ): DiscordWebhookEmbed => {
 	const titleText = toSpaceSeparatedPascalCase(getScheduleValue(schedule));
 	const footerText = toSpaceSeparatedPascalCase(ScheduleKind[schedule.kind]);
-	const emoji = getEmoji(schedule.kind);
+	const emoji = getEmoji(schedule.kind, schedule.value);
 
 	const startDate = zonedTimeToUtc(set(date, time), ROO_TIME_ZONE);
 	const start = toDiscordTimestamp(startDate);
 
-	let status = match === MatchKind.StartsIn10Minutes ? 'starts' : 'is starting';
+	let status = match === MatchKind.StartsIn5Minutes ? 'starts' : 'is starting';
 	let description = `**${titleText}** ${status} ${start}!`;
 
 	if (duration !== undefined) {
@@ -56,6 +68,6 @@ export const generateEmbed = (
 
 const toDiscordTimestamp = (date: Date) => {
 	const unixTime = getUnixTime(date);
-	// Minimal relative timestamp: "in 10 minutes" or "a few seconds ago"
+	// Minimal relative timestamp: "in 5 minutes" or "a few seconds ago"
 	return `<t:${unixTime}:R>`;
 };
