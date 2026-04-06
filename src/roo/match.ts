@@ -3,7 +3,7 @@ import { differenceInMinutes, set, startOfMinute } from 'date-fns';
 import { ScheduleTime } from './schedule';
 
 export enum MatchKind {
-	StartsIn10Minutes,
+	StartsIn5Minutes,
 	StartsNow,
 }
 
@@ -22,8 +22,8 @@ export const matchSchedule = (
 
 		if (diff === 0) {
 			return { kind: MatchKind.StartsNow, time: time_ };
-		} else if (diff === 10) {
-			return { kind: MatchKind.StartsIn10Minutes, time: time_ };
+		} else if (diff === 5) {
+			return { kind: MatchKind.StartsIn5Minutes, time: time_ };
 		}
 	}
 };
