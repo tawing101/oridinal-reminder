@@ -1,15 +1,14 @@
-import { add, formatDuration, getUnixTime, set } from 'date-fns';
+import { formatDuration, getUnixTime, set } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
 
 import { MatchKind } from './match';
 import { ROO_TIME_ZONE, Schedule, ScheduleKind, ScheduleTime, getScheduleValue } from './schedule';
-
 import { toSpaceSeparatedPascalCase } from '../utilities';
 import { Daily } from './schedule/daily';
 
 const colors = {
-	[MatchKind.StartsIn5Minutes]: 0xffd166, // warm yellow for "get ready"
-	[MatchKind.StartsNow]: 0x06d6a0, // mint green for "starting now"
+	[MatchKind.StartsIn5Minutes]: 0xffd166, // Warm yellow
+	[MatchKind.StartsNow]: 0x06d6a0, // Mint green
 } satisfies Record<MatchKind, number>;
 
 const getEmoji = (kind: ScheduleKind, value?: any) => {
@@ -41,33 +40,25 @@ export const generateEmbed = (
 	duration?: Duration,
 ): DiscordWebhookEmbed => {
 	const titleText = toSpaceSeparatedPascalCase(getScheduleValue(schedule));
-	const footerText = toSpaceSeparatedPascalCase(ScheduleKind[schedule.kind]);
 	const emoji = getEmoji(schedule.kind, schedule.value);
 
 	const startDate = zonedTimeToUtc(set(date, time), ROO_TIME_ZONE);
-	const start = toDiscordTimestamp(startDate);
+	const startTimestamp = `<t:${getUnixTime(startDate)}:R>`;
 
 	let status = match === MatchKind.StartsIn5Minutes ? 'starts' : 'is starting';
-	let description = `**${titleText}** ${status} ${start}!`;
+	let description = `**${titleText}** ${status} ${startTimestamp}!`;
 
-	if (duration !== undefined) {
-		const duration_ = formatDuration(duration, { format: ['hours', 'minutes'] })
+	if (duration && Object.keys(duration).length > 0) {
+		const durStr = formatDuration(duration)
 			.replace(' hours', 'h').replace(' hour', 'h')
 			.replace(' minutes', 'm').replace(' minute', 'm');
-			
-		description += `\n⏳ *Duration: ${duration_}*`;
+		description += `\n⏳ *Duration: ${durStr}*`;
 	}
 
 	return {
 		title: `${emoji} ${titleText}`,
 		description,
-		footer: { text: footerText, icon_url: 'https://b.cgas.io/mVhvd_L8tHq1.png' },
 		color: colors[match],
+		footer: { text: toSpaceSeparatedPascalCase(ScheduleKind[schedule.kind]) }
 	};
-};
-
-const toDiscordTimestamp = (date: Date) => {
-	const unixTime = getUnixTime(date);
-	// Minimal relative timestamp: "in 5 minutes" or "a few seconds ago"
-	return `<t:${unixTime}:R>`;
 };
