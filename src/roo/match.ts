@@ -13,7 +13,7 @@ export const matchSchedule = (
 ): { kind: MatchKind; time: ScheduleTime } | undefined => {
 	const times = Array.isArray(time) ? time : [time];
 	
-	// OPTIMIZATION: Strip seconds to prevent missed matches if Cron fires late
+	// Strip seconds to ensure consistent matching even if the trigger is slightly delayed
 	const currentMinute = startOfMinute(date);
 
 	for (const time_ of times) {
