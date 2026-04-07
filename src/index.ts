@@ -1,7 +1,7 @@
 import { utcToZonedTime } from 'date-fns-tz';
 
 import { generateEmbed } from './roo/embed';
-import { matchSchedule } from './roo/match';
+import { MatchKind, matchSchedule } from './roo/match';
 
 import { ROO_TIME_ZONE, Schedule, ScheduleKind, getScheduleDuration, getScheduleTime } from './roo/schedule';
 import { getDailies } from './roo/schedule/daily';
@@ -31,7 +31,7 @@ const scheduled = ((_controller, env, ctx) => {
 		const match = matchSchedule(time, date);
 		
 		if (match !== undefined) {
-			if (match.kind === 1) { // 1 corresponds to MatchKind.StartsNow
+			if (match.kind === MatchKind.StartsNow) {
 				hasStartingNow = true;
 			}
 			const duration = getScheduleDuration(schedule);
