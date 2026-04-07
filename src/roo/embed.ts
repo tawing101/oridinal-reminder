@@ -19,7 +19,6 @@ const getEmoji = (kind: ScheduleKind, value?: any) => {
 			case Daily.GuildExpedition: return '🗺️';
 			case Daily.TheGuildLeague: return '🛡️';
 			case Daily.ThemedParty: return '💃';
-			case Daily.TimeSpaceAbnormality: return '🌌';
 			case Daily.WarOfEmperium: return '🏰';
 			case Daily.WeekendBanquet: return '🥂';
 		}
