@@ -42,10 +42,7 @@ const scheduled = ((_controller, env, ctx) => {
 
 	if (embeds.length > 0) {
 		const mention = `<@&${env.DISCORD_ROLE_MENTION_ID}>`;
-		
-		const greeting = hasStartingNow 
-			? "It's time to play! 🎉" 
-			: "Get ready, everyone! 🌟";
+		const greeting = hasStartingNow ? "It's time to play! 🎉" : "Get ready, everyone! 🌟";
 
 		const payload = {
 			content: `Hey ${mention}! ${greeting}`,
@@ -62,16 +59,12 @@ const scheduled = ((_controller, env, ctx) => {
 				if (!res.ok) {
 					const errorText = await res.text();
 					console.error(`Discord API Error (${res.status}): ${errorText}`);
-				} else {
-					console.log(`Successfully sent ${embeds.length} embeds to Discord.`);
 				}
 			})
 			.catch((err) => {
 				console.error('Fetch error when contacting Discord:', err);
 			})
 		);
-	} else {
-		console.log('No events matched the current time. Nothing sent to Discord.');
 	}
 }) satisfies ExportedHandlerScheduledHandler<Env>;
 
