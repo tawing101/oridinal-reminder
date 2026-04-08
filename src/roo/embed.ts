@@ -14,11 +14,11 @@ const colors = {
 const getEmoji = (kind: ScheduleKind, value?: any) => {
 	if (kind === ScheduleKind.Daily) {
 		switch (value) {
-			case Daily.Arena: return '⚔️';
 			case Daily.ExtremeChallenge: return '🔥';
 			case Daily.GuildExpedition: return '🗺️';
 			case Daily.TheGuildLeague: return '🛡️';
 			case Daily.ThemedParty: return '💃';
+			case Daily.TimeSpaceAbnormality: return '🌌';
 			case Daily.WarOfEmperium: return '🏰';
 			case Daily.WeekendBanquet: return '🥂';
 		}
