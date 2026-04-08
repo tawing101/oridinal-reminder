@@ -1,17 +1,17 @@
 import { ScheduleTime } from '.';
 
 export enum Daily {
-	Arena,
 	ExtremeChallenge,
 	GuildExpedition,
 	TheGuildLeague,
 	ThemedParty,
+	TimeSpaceAbnormality,
 	WarOfEmperium,
 	WeekendBanquet,
 }
 
 export const getDailies = (date: Date): Daily[] => {
-	const day = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+	const day = date.getDay(); 
 
 	switch (day) {
 		case 0: // Sunday
@@ -19,15 +19,15 @@ export const getDailies = (date: Date): Daily[] => {
 		case 1: // Monday
 			return [Daily.ExtremeChallenge];
 		case 2: // Tuesday
-			return [Daily.TheGuildLeague];
+			return [Daily.TimeSpaceAbnormality, Daily.TheGuildLeague];
 		case 3: // Wednesday
-			return [Daily.Arena];
+			return []; // Arena removed
 		case 4: // Thursday
 			return [Daily.GuildExpedition, Daily.TheGuildLeague];
 		case 5: // Friday
-			return []; // Enjoy the break!
+			return []; 
 		case 6: // Saturday
-			return [Daily.WeekendBanquet, Daily.TheGuildLeague];
+			return [Daily.WeekendBanquet, Daily.TimeSpaceAbnormality, Daily.TheGuildLeague];
 		default:
 			return [];
 	}
@@ -35,12 +35,12 @@ export const getDailies = (date: Date): Daily[] => {
 
 export const getDailyDuration = (value: Daily): Duration => {
 	switch (value) {
-		case Daily.Arena: return { minutes: 35 };
 		case Daily.GuildExpedition:
 		case Daily.WeekendBanquet: return { minutes: 20 };
 		case Daily.ExtremeChallenge: return { hours: 19 };
 		case Daily.TheGuildLeague: return { minutes: 25 };
 		case Daily.ThemedParty: return { minutes: 30 };
+		case Daily.TimeSpaceAbnormality: return { minutes: 13 };
 		case Daily.WarOfEmperium: return { hours: 1, minutes: 10 };
 		default: return {};
 	}
@@ -54,10 +54,9 @@ export const getDailyTime = (value: Daily): ScheduleTime => {
 		case Daily.WeekendBanquet:
 			return { hours: 20, minutes: 0 };
 		case Daily.TheGuildLeague:
-			return { hours: 19, minutes: 55 }; // 7:55 PM In-game
-		case Daily.Arena:
-			return { hours: 20, minutes: 25 };
+			return { hours: 19, minutes: 55 }; // Fixed per in-game time
 		case Daily.GuildExpedition:
+		case Daily.TimeSpaceAbnormality:
 			return { hours: 20, minutes: 30 };
 		case Daily.WarOfEmperium:
 			return { hours: 21, minutes: 20 };
